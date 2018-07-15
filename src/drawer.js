@@ -100,17 +100,16 @@ export default class Drawer extends util.Observer {
             progress =
                 (clientX - bbox.left) *
                     (this.params.pixelRatio / nominalWidth) || 0;
-
-            if (progress > 1) {
-                progress = 1;
-            }
         } else {
             progress =
                 (clientX - bbox.left + this.wrapper.scrollLeft) /
                     this.wrapper.scrollWidth || 0;
         }
 
-        return progress;
+        // clientX is an integer, while bbox.left is a double, so if the user clicks on the very edge of the wave
+        // an error is thrown, since clientX - bbox.left = a negative number
+        // This will protect that our value is b/w 0-1
+        return Math.min(Math.max(0, progress), 1);
     }
 
     /**
